@@ -163,7 +163,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-semibold text-slate-500 uppercase flex items-center gap-1">
                 <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                Active Persona
+                Simulated Persona
+              </span>
+              <span className="text-[9px] bg-slate-200 text-slate-700 font-mono font-bold px-1.5 py-0.2 rounded">
+                DEMO ONLY
               </span>
             </div>
             
@@ -181,6 +184,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </select>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
             </div>
+            <p className="text-[9px] text-slate-400 mt-1.5 leading-tight">
+              Simulated persona workflow for evaluation demo; does not enforce server-side security.
+            </p>
           </div>
         )}
 

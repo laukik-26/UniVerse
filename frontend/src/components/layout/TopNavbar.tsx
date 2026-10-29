@@ -117,8 +117,11 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             className="w-9 h-9 rounded-full object-cover ring-1 ring-slate-200"
           />
           <div className="hidden lg:block text-left">
-            <div className="text-xs font-bold text-slate-900 leading-tight">
+            <div className="text-xs font-bold text-slate-900 leading-tight flex items-center gap-1.5">
               {currentProfile.name}
+              <span className="text-[9px] bg-slate-100 text-slate-500 font-mono px-1 py-0.2 rounded border border-slate-200">
+                Simulated
+              </span>
             </div>
             <div className="text-[11px] text-slate-500 font-medium">
               {currentProfile.title}
