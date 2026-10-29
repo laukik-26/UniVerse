@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Server, 
-  Cpu, 
   Leaf, 
-  Zap, 
   Sliders, 
-  ShieldCheck, 
-  RefreshCw, 
-  TrendingDown, 
-  Layers, 
-  CheckCircle2, 
-  BarChart3 
+  BarChart3, 
+  RefreshCw 
 } from 'lucide-react';
 
+import { PageHeader } from '../common/PageHeader';
+import { StatCard } from '../common/StatCard';
+import { Button } from '../common/Button';
 import { TelemetryServiceCards } from './TelemetryServiceCards';
 import { ScenarioComparisonView } from './ScenarioComparisonView';
 import { TransportVsComputeCard } from './TransportVsComputeCard';
@@ -108,120 +105,58 @@ export const ObservatoryView: React.FC<ObservatoryViewProps> = ({ onActivityLogg
     });
   };
 
+  const totalOptimizedKwh = scenariosSummary ? scenariosSummary.total_optimized_energy_kwh.toFixed(3) : '0.154';
+  const baselineKwh = scenariosSummary ? scenariosSummary.total_baseline_energy_kwh.toFixed(3) : '0.397';
+  const pctSaved = scenariosSummary ? scenariosSummary.overall_energy_savings_percentage.toFixed(1) : '61.2';
+  const co2AvoidedKg = scenariosSummary ? scenariosSummary.total_co2_avoided_kg.toFixed(3) : '0.174';
+
   return (
     <div className="space-y-6">
       {/* 1. Page Heading */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-              Sustainable Computing Observatory
-            </h1>
-            <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-200">
-              Module C Active
-            </span>
-          </div>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
-            Simulate, quantify, and optimize software workload energy consumption and carbon emissions.
-          </p>
-        </div>
+      <PageHeader
+        title="Sustainable Computing Observatory"
+        subtitle="Simulate, quantify, and optimize software workload energy consumption and carbon emissions."
+      >
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={loading}
+          leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />}
+        >
+          Refresh telemetry
+        </Button>
+      </PageHeader>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={loading}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-xs disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh Telemetry</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Compact ERP-Style KPI Cards */}
+      {/* 2. StatCard Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KPI 1: Total Baseline vs Optimized Energy */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Compute Energy</span>
-            <div className="p-2 bg-blue-50 text-blue-700 rounded-lg">
-              <Zap className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">
-              {scenariosSummary ? scenariosSummary.total_optimized_energy_kwh.toFixed(3) : '0.154'}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">kWh</span>
-          </div>
-          <div className="mt-1 flex items-center text-xs text-emerald-700 font-medium">
-            <TrendingDown className="w-3.5 h-3.5 mr-1" />
-            <span>
-              {scenariosSummary ? `-${scenariosSummary.overall_energy_savings_percentage.toFixed(1)}%` : '-61.2%'} vs Baseline ({scenariosSummary?.total_baseline_energy_kwh.toFixed(3) ?? '0.397'} kWh)
-            </span>
-          </div>
-        </div>
+        <StatCard
+          label="Total compute energy"
+          value={`${totalOptimizedKwh} kWh`}
+          subtext={`-${pctSaved}% vs baseline (${baselineKwh} kWh)`}
+          dotVariant="info"
+        />
 
-        {/* KPI 2: Net CO2 Avoided */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Carbon Avoided</span>
-            <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg">
-              <Leaf className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-700">
-              {scenariosSummary ? scenariosSummary.total_co2_avoided_kg.toFixed(3) : '0.174'}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">kg CO₂</span>
-          </div>
-          <div className="mt-1 flex items-center text-xs text-emerald-700 font-medium">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-            <span>
-              {scenariosSummary ? `${(scenariosSummary.total_co2_avoided_kg * 1000).toFixed(0)}g` : '174g'} reduction per observation hr
-            </span>
-          </div>
-        </div>
+        <StatCard
+          label="Carbon avoided"
+          value={`${co2AvoidedKg} kg CO₂`}
+          subtext={`${((scenariosSummary?.total_co2_avoided_kg ?? 0.174) * 1000).toFixed(0)}g reduction per hr`}
+          dotVariant="success"
+        />
 
-        {/* KPI 3: Active Workloads Monitored */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Active Services</span>
-            <div className="p-2 bg-indigo-50 text-indigo-700 rounded-lg">
-              <Cpu className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">
-              {services.length}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Microservices</span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            Placement API, Resource Search, Ride Matcher
-          </div>
-        </div>
+        <StatCard
+          label="Active microservices"
+          value={services.length}
+          subtext="Placement, rides & search"
+          dotVariant="neutral"
+        />
 
-        {/* KPI 4: Active Grid Intensity Standard */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Operational Grid Baseline</span>
-            <div className="p-2 bg-amber-50 text-amber-700 rounded-lg">
-              <Server className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">
-              {gridFactor.toFixed(3)}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">kg/kWh</span>
-          </div>
-          <div className="mt-1 text-[11px] text-slate-500 truncate" title="CEA Indian Power Sector Baseline v19.0 (2024)">
-            CEA Indian Grid v19.0 (Published 2024)
-          </div>
-        </div>
+        <StatCard
+          label="Grid emissions factor"
+          value={`${gridFactor.toFixed(3)}`}
+          subtext="kg CO₂/kWh (CEA India benchmark)"
+          dotVariant="neutral"
+        />
       </div>
 
       {/* 3. Navigation Tabs */}
@@ -230,67 +165,58 @@ export const ObservatoryView: React.FC<ObservatoryViewProps> = ({ onActivityLogg
           <button
             type="button"
             onClick={() => setActiveTab('telemetry')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'telemetry'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
-            <Layers className="w-4 h-4" />
-            <span>Workload Telemetry</span>
-            <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.2 rounded font-mono">
-              3 Services
-            </span>
+            <Server className="w-4 h-4" />
+            <span>Telemetry services</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('scenarios')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'scenarios'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <BarChart3 className="w-4 h-4" />
-            <span>Scenario Comparison</span>
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-mono font-bold">
-              Baseline vs Optimized
-            </span>
+            <span>Scenario comparisons</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('transport-vs-compute')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'transport-vs-compute'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" />
-            <span>Transport vs Compute Partition</span>
-            <span className="bg-indigo-50 text-indigo-700 text-[10px] px-1.5 py-0.2 rounded font-semibold">
-              Zero Double-Counting
-            </span>
+            <Leaf className="w-4 h-4" />
+            <span>Transport vs compute</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('assumptions')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'assumptions'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <Sliders className="w-4 h-4" />
-            <span>Configurable Model & Simulator</span>
+            <span>Configurable assumptions</span>
           </button>
         </nav>
       </div>
 
-      {/* 4. Tab Content Panels */}
+      {/* 4. Tab Panels */}
       {activeTab === 'telemetry' && (
         <TelemetryServiceCards
           services={services}

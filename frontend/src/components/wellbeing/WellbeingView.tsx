@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Clock, 
   Eye, 
-  Sparkles, 
+  BarChart3, 
   ShieldCheck, 
-  Lock, 
-  Layers 
+  Lock 
 } from 'lucide-react';
+import { PageHeader } from '../common/PageHeader';
+import { StatCard } from '../common/StatCard';
 import { FocusTimerCard } from './FocusTimerCard';
 import { BrowsingInspectorCard } from './BrowsingInspectorCard';
 import { MetricsSummaryCard } from './MetricsSummaryCard';
@@ -117,100 +118,46 @@ export const WellbeingView: React.FC<WellbeingViewProps> = ({ onActivityLogged }
 
   return (
     <div className="space-y-6">
-      {/* 1. Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-              Privacy-Aware Digital Wellbeing
-            </h1>
-            <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-200">
-              Module D Active
-            </span>
-          </div>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
-            Voluntary focus session timer, transparent domain categorization, and client-side data sovereignty.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200/80">
+      {/* 1. Page Header */}
+      <PageHeader
+        title="Privacy-Aware Digital Wellbeing"
+        subtitle="Voluntary focus session timer, transparent domain categorization, and client-side data sovereignty."
+      >
+        <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
           <Lock className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Non-Surveillance Guarantee</span>
+          <span>Non-surveillance guarantee</span>
         </div>
-      </div>
+      </PageHeader>
 
-      {/* 2. Top ERP KPI Cards */}
+      {/* 2. Top KPI StatCards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Productivity Score</span>
-            <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg">
-              <Sparkles className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-700">
-              {metrics.productivity_score_pct}%
-            </span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            Dwell time capped at 300s
-          </div>
-        </div>
+        <StatCard
+          label="Productivity score"
+          value={`${metrics.productivity_score_pct}%`}
+          subtext="Dwell time capped at 300s"
+          dotVariant="success"
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Context Transitions</span>
-            <div className="p-2 bg-indigo-50 text-indigo-700 rounded-lg">
-              <Layers className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">
-              {metrics.context_switches}
-            </span>
-            <span className="text-xs text-slate-500">Switches</span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            Between category types
-          </div>
-        </div>
+        <StatCard
+          label="Context transitions"
+          value={metrics.context_switches}
+          subtext="Between domain categories"
+          dotVariant="info"
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Saved Sessions</span>
-            <div className="p-2 bg-blue-50 text-blue-700 rounded-lg">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">
-              {sessions.length}
-            </span>
-            <span className="text-xs text-slate-500">Sessions</span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            Stored locally in SQLite
-          </div>
-        </div>
+        <StatCard
+          label="Logged sessions"
+          value={sessions.length}
+          subtext="Stored in local storage/DB"
+          dotVariant="neutral"
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">URLs Transmitted</span>
-            <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-700">
-              0
-            </span>
-            <span className="text-xs text-emerald-700 font-semibold">Strict Zero</span>
-          </div>
-          <div className="mt-1 text-xs text-emerald-700">
-            Zero raw browsing shared
-          </div>
-        </div>
+        <StatCard
+          label="URLs transmitted"
+          value="0"
+          subtext="Strict zero raw browsing shared"
+          dotVariant="success"
+        />
       </div>
 
       {/* 3. Navigation Tabs */}
@@ -219,56 +166,53 @@ export const WellbeingView: React.FC<WellbeingViewProps> = ({ onActivityLogged }
           <button
             type="button"
             onClick={() => setActiveTab('timer')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'timer'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <Clock className="w-4 h-4" />
-            <span>Focus Timer</span>
+            <span>Focus timer</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('inspector')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'inspector'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <Eye className="w-4 h-4" />
-            <span>Browsing Inspector & Rules</span>
-            <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.2 rounded font-mono">
-              Synthetic
-            </span>
+            <span>Domain rules & inspector</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('metrics')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'metrics'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Metrics & Attention</span>
+            <BarChart3 className="w-4 h-4" />
+            <span>Wellbeing analytics</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('sovereignty')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'sovereignty'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Data Sovereignty & Purge</span>
+            <span>Data sovereignty & purge</span>
           </button>
         </nav>
       </div>

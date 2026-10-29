@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ShieldCheck, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Layers, 
   Sliders, 
   Camera, 
   RefreshCw 
 } from 'lucide-react';
+import { PageHeader } from '../common/PageHeader';
+import { StatCard } from '../common/StatCard';
+import { Button } from '../common/Button';
 import { ExamProctorBanner } from './ExamProctorBanner';
 import { IncidentReviewTable } from './IncidentReviewTable';
-import { IncidentDetailModal } from './IncidentDetailModal';
+import { IncidentDetailPanel } from './IncidentDetailPanel';
 import { ObservableRulesVisualizer } from './ObservableRulesVisualizer';
 import { ControlledCameraFeed } from './ControlledCameraFeed';
 import { examApi } from '../../services/examApi';
@@ -80,103 +79,54 @@ export const ExamMonitoringView: React.FC<ExamMonitoringViewProps> = ({ onActivi
 
   return (
     <div className="space-y-6">
-      {/* 1. Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-              Responsible Examination Monitoring
-            </h1>
-            <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-200">
-              Module E Active
-            </span>
-          </div>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
-            Human-centered invigilation with observable geometric rules, audit trails, and strict non-punitive safeguards.
-          </p>
-        </div>
+      {/* 1. Page Header */}
+      <PageHeader
+        title="Responsible Examination Monitoring"
+        subtitle="Human-centered invigilation with observable geometric rules, audit trails, and strict non-punitive safeguards."
+      >
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={loadIncidents}
+          disabled={loading}
+          leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />}
+        >
+          Refresh queue
+        </Button>
+      </PageHeader>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={loadIncidents}
-            disabled={loading}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-xs disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh Queue</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Top ERP KPI Cards */}
+      {/* 2. Top KPI StatCards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Flagged Cues</span>
-            <div className="p-2 bg-blue-50 text-blue-700 rounded-lg">
-              <Layers className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-slate-900">{totalCount}</span>
-            <span className="text-xs text-slate-500">Incidents</span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            100% human-audited queue
-          </div>
-        </div>
+        <StatCard
+          label="Total flagged cues"
+          value={totalCount}
+          subtext="100% human-audited queue"
+          dotVariant="neutral"
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Pending Proctor Review</span>
-            <div className="p-2 bg-amber-50 text-amber-700 rounded-lg">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-amber-700">{pendingCount}</span>
-            <span className="text-xs text-slate-500">Unreviewed</span>
-          </div>
-          <div className="mt-1 text-xs text-amber-700 font-medium">
-            Requires invigilator inspection
-          </div>
-        </div>
+        <StatCard
+          label="Pending proctor review"
+          value={pendingCount}
+          subtext="Requires invigilator inspection"
+          dotVariant={pendingCount > 0 ? 'warning' : 'neutral'}
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Under Active Review</span>
-            <div className="p-2 bg-indigo-50 text-indigo-700 rounded-lg">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-indigo-700">{inReviewCount}</span>
-            <span className="text-xs text-slate-500">In Progress</span>
-          </div>
-          <div className="mt-1 text-xs text-slate-500">
-            Proctor verifying evidence
-          </div>
-        </div>
+        <StatCard
+          label="Under active review"
+          value={inReviewCount}
+          subtext="Proctor verifying context"
+          dotVariant={inReviewCount > 0 ? 'info' : 'neutral'}
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Cleared / Resolved</span>
-            <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-700">{clearedCount}</span>
-            <span className="text-xs text-emerald-700 font-semibold">Cases Closed</span>
-          </div>
-          <div className="mt-1 text-xs text-emerald-700">
-            0 automated penalties applied
-          </div>
-        </div>
+        <StatCard
+          label="Cleared / resolved"
+          value={clearedCount}
+          subtext="0 automated penalties applied"
+          dotVariant="success"
+        />
       </div>
 
-      {/* 3. Mandatory Ethical Policy Banner */}
+      {/* 3. Mandatory Ethical Disclosure Banner */}
       <ExamProctorBanner />
 
       {/* 4. Navigation Tabs */}
@@ -185,60 +135,68 @@ export const ExamMonitoringView: React.FC<ExamMonitoringViewProps> = ({ onActivi
           <button
             type="button"
             onClick={() => setActiveTab('queue')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'queue'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Incident Review Queue</span>
-            <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.2 rounded font-mono font-bold">
-              {incidents.length}
-            </span>
+            <span>Incident review queue</span>
+            <span className="font-mono text-[10px] text-slate-400">({incidents.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('rules')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'rules'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <Sliders className="w-4 h-4" />
-            <span>Observable Rules Testbed</span>
-            <span className="bg-indigo-50 text-indigo-700 text-[10px] px-1.5 py-0.2 rounded font-mono">
-              2 Rules
-            </span>
+            <span>Observable rules testbed</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('station')}
-            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors ${
+            className={`py-3 px-1 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-2 transition-colors duration-150 ${
               activeTab === 'station'
-                ? 'border-blue-600 text-blue-700 font-bold'
+                ? 'border-blue-600 text-blue-700 font-semibold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
             }`}
           >
             <Camera className="w-4 h-4" />
-            <span>Live Proctor Station</span>
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-mono font-bold">
-              Local Feed
-            </span>
+            <span>Live proctor station</span>
           </button>
         </nav>
       </div>
 
-      {/* 5. Tab Panels */}
+      {/* 5. Tab Panels with Master-Detail Layout */}
       {activeTab === 'queue' && (
-        <IncidentReviewTable
-          incidents={incidents}
-          onSelectIncident={(inc) => setSelectedIncident(inc)}
-          onQuickUpdateStatus={handleQuickUpdateStatus}
-        />
+        <div className={`grid grid-cols-1 ${selectedIncident ? 'xl:grid-cols-12 gap-6' : ''}`}>
+          <div className={selectedIncident ? 'xl:col-span-7' : 'w-full'}>
+            <IncidentReviewTable
+              incidents={incidents}
+              selectedIncidentId={selectedIncident?.id}
+              onSelectIncident={(inc) => setSelectedIncident(inc)}
+              onQuickUpdateStatus={handleQuickUpdateStatus}
+            />
+          </div>
+
+          {selectedIncident && (
+            <div className="xl:col-span-5 mt-6 xl:mt-0">
+              <IncidentDetailPanel
+                isOpen={!!selectedIncident}
+                incident={selectedIncident}
+                onClose={() => setSelectedIncident(null)}
+                onUpdate={handleModalUpdate}
+              />
+            </div>
+          )}
+        </div>
       )}
 
       {activeTab === 'rules' && (
@@ -248,13 +206,6 @@ export const ExamMonitoringView: React.FC<ExamMonitoringViewProps> = ({ onActivi
       {activeTab === 'station' && (
         <ControlledCameraFeed />
       )}
-
-      {/* 6. Modal for incident inspection & audit */}
-      <IncidentDetailModal
-        incident={selectedIncident}
-        onClose={() => setSelectedIncident(null)}
-        onUpdate={handleModalUpdate}
-      />
     </div>
   );
 };

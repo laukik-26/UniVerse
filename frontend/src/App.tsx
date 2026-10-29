@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
-import { TopNavbar } from './components/layout/TopNavbar';
+import { Header } from './components/layout/Header';
 import { OverviewView } from './components/dashboard/OverviewView';
 import { AcademicHubView } from './components/academic/AcademicHubView';
 import { RidePoolingView } from './components/rides/RidePoolingView';
@@ -90,7 +90,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-row">
-      {/* 1. Left Sidebar Navigation */}
+      {/* 1. Left Sidebar Navigation (220px collapsible) */}
       <Sidebar
         activeModule={activeModule}
         onSelectModule={(mod) => setActiveModule(mod)}
@@ -100,10 +100,11 @@ export const App: React.FC = () => {
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
-      {/* 2. Main Content Canvas */}
+      {/* 2. Main Canvas */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
-        {/* Top Navbar */}
-        <TopNavbar
+        {/* Top Header (56px sticky) */}
+        <Header
+          activeModule={activeModule}
           activeRole={activeRole}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -111,8 +112,8 @@ export const App: React.FC = () => {
           unreadCount={unreadCount}
         />
 
-        {/* Page Body */}
-        <main className="flex-1 p-5 md:p-7 max-w-7xl w-full mx-auto">
+        {/* Page Content Canvas (Full width without max-w-7xl, 24-32px padding) */}
+        <main className="flex-1 px-6 md:px-8 py-6 w-full">
           {activeModule === 'overview' && (
             <OverviewView onNavigateModule={(mod) => setActiveModule(mod)} />
           )}
@@ -161,21 +162,21 @@ export const App: React.FC = () => {
           )}
         </main>
 
-        {/* Enterprise Bottom Status Footer */}
-        <footer className="border-t border-slate-200 bg-white py-3.5 px-6 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* Bottom Status Footer */}
+        <footer className="border-t border-slate-200 bg-white py-3 px-6 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">UniVerse Campus Ecosystem</span>
+            <span className="font-medium text-slate-800">UniVerse Campus Ecosystem</span>
             <span>&bull;</span>
-            <span>12-Hour Evaluation Integrated MVP</span>
+            <span>Integrated Evaluation Platform</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>Graph Algorithms</span>
+          <div className="flex items-center gap-3 text-slate-400">
+            <span>Graph Routing</span>
             <span>&bull;</span>
-            <span>Computer Vision</span>
+            <span>Energy Telemetry</span>
             <span>&bull;</span>
-            <span>Sustainability Telemetry</span>
+            <span>Privacy Analytics</span>
             <span>&bull;</span>
-            <span>Privacy Engineering</span>
+            <span>Audited CV Invigilation</span>
           </div>
         </footer>
       </div>

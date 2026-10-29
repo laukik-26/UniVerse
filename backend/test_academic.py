@@ -89,6 +89,17 @@ def test_placement_progress_dynamic_calculation():
     # Cleanup
     delete_task(task_id=new_task.id)
 
+def test_empty_task_list_progress_behavior():
+    """Verify that querying progress for a student with zero tasks safely returns 0.0% without division-by-zero."""
+    empty_prog = get_placement_progress(student_id="STU-NONEXISTENT-9999")
+    assert empty_prog.total_tasks == 0
+    assert empty_prog.completed_tasks == 0
+    assert empty_prog.completion_percentage == 0.0
+    for cat, data in empty_prog.tasks_by_category.items():
+        assert data["total"] == 0
+        assert data["completed"] == 0
+        assert data["percent"] == 0.0
+
 def test_peer_mentors_search_and_filter():
     # 1. All mentors
     all_mentors = get_peer_mentors()
