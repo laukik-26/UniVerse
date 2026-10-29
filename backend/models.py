@@ -119,3 +119,112 @@ class ActivityEventCreate(BaseModel):
     module: str
     title: str
     event_type: Literal["info", "success", "warning", "alert"] = "info"
+
+# ----------------- Smart Campus Ride-Pooling (Module B) -----------------
+
+class CampusLocationResponse(BaseModel):
+    id: str
+    name: str
+    category: str
+    x: int
+    y: int
+
+class DriverRideCreate(BaseModel):
+    origin_id: str
+    destination_id: str
+    departure_time: str = Field(..., pattern=r"^\d{2}:\d{2}$") # Format: HH:MM
+    available_seats: int = Field(..., ge=1, le=8)
+    max_detour_km: float = Field(..., ge=0.1, le=10.0)
+    driver_id: Optional[str] = "DRV-2026-104"
+    driver_name: Optional[str] = "Marcus Vance (Transit Coordinator)"
+
+class DriverRideResponse(BaseModel):
+    id: str
+    driver_id: str
+    driver_name: str
+    origin_id: str
+    origin_name: str
+    destination_id: str
+    destination_name: str
+    departure_time: str
+    available_seats: int
+    total_seats: int
+    max_detour_km: float
+    direct_distance_km: float
+    direct_path: List[str]
+    status: str
+    created_at: str
+
+class PassengerRequestCreate(BaseModel):
+    pickup_id: str
+    dropoff_id: str
+    preferred_time: str = Field(..., pattern=r"^\d{2}:\d{2}$") # Format: HH:MM
+    time_flexibility_mins: int = Field(default=15, ge=0, le=60)
+    seats_needed: int = Field(default=1, ge=1, le=6)
+    max_detour_km: float = Field(default=3.0, ge=0.1, le=10.0)
+    passenger_id: Optional[str] = "STU-2026-0842"
+    passenger_name: Optional[str] = "Alex Rivera (Student)"
+
+class PassengerRequestResponse(BaseModel):
+    id: str
+    passenger_id: str
+    passenger_name: str
+    pickup_id: str
+    pickup_name: str
+    dropoff_id: str
+    dropoff_name: str
+    preferred_time: str
+    time_flexibility_mins: int
+    seats_needed: int
+    max_detour_km: float
+    direct_distance_km: float
+    status: str
+    matched_ride_id: Optional[str] = None
+    created_at: str
+
+class MatchCandidate(BaseModel):
+    ride_id: str
+    driver_name: str
+    driver_origin: str
+    driver_destination: str
+    departure_time: str
+    available_seats: int
+    driver_direct_distance_km: float
+    passenger_direct_distance_km: float
+    shared_distance_km: float
+    detour_km: float
+    time_difference_mins: int
+    net_saved_distance_km: float
+    estimated_cost_savings_inr: float
+    estimated_co2_avoided_kg: float
+    assumed_stop_order: List[str]
+    shared_path_nodes: List[str]
+    legs: dict
+    match_score: float
+    methodology_disclaimer: str
+
+class RejectedCandidate(BaseModel):
+    ride_id: str
+    driver_name: str
+    departure_time: str
+    rejection_reason: str
+    rejection_detail: str
+
+class RideSearchResult(BaseModel):
+    passenger_request: dict
+    passenger_direct_distance_km: float
+    matches_count: int
+    compatible_matches: List[MatchCandidate]
+    rejected_candidates: List[RejectedCandidate]
+
+class TransportSavingsSummary(BaseModel):
+    total_rides_offered: int
+    active_rides_count: int
+    total_carpools_completed: int
+    total_saved_vkt_km: float
+    total_cost_saved_inr: float
+    total_co2_avoided_kg: float
+    assumed_cost_per_km_inr: float
+    assumed_emission_factor_g_km: float
+    methodology_note: str
+

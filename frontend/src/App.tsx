@@ -3,6 +3,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { TopNavbar } from './components/layout/TopNavbar';
 import { OverviewView } from './components/dashboard/OverviewView';
 import { AcademicHubView } from './components/academic/AcademicHubView';
+import { RidePoolingView } from './components/rides/RidePoolingView';
 import { ModuleFoundationView } from './components/modules/ModuleFoundationView';
 import { NotificationDrawer } from './components/common/NotificationDrawer';
 import type { ModuleId, UserRole, ActivityNotification } from './types/navigation';
@@ -116,7 +117,13 @@ export const App: React.FC = () => {
             />
           )}
 
-          {activeModule !== 'overview' && activeModule !== 'academic-hub' && (
+          {activeModule === 'ride-pooling' && (
+            <RidePoolingView
+              onActivityLogged={(title, type) => handleActivityLogged(title, type)}
+            />
+          )}
+
+          {activeModule !== 'overview' && activeModule !== 'academic-hub' && activeModule !== 'ride-pooling' && (
             <ModuleFoundationView
               moduleId={activeModule}
               onBackToOverview={() => setActiveModule('overview')}

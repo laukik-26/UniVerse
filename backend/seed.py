@@ -267,6 +267,8 @@ def seed_database():
         ("act-01", "academic-hub", "Sarah Lin accepted mentorship request on Graph Shortest Path", "success", "3 hours ago"),
         ("act-02", "academic-hub", "Completed task: Build Full-Stack FastAPI & SQLite RESTful API", "info", "1 day ago"),
         ("act-03", "academic-hub", "New resource published: CS306 Quantitative Aptitude Speed Drill", "info", "2 days ago"),
+        ("act-04", "ride-pooling", "Marcus Vance created morning route: Main Gate to South Gate", "info", "4 hours ago"),
+        ("act-05", "ride-pooling", "Carpool matched: 3.2 vehicle-km saved (0.38 kg CO2e avoided)", "success", "5 hours ago"),
     ]
 
     for act in sample_activities:
@@ -280,6 +282,73 @@ def seed_database():
                 """,
                 (act[0], act[1], act[2], act[3], act[4], datetime.now().isoformat())
             )
+
+    # 7. Seed Driver Rides (Module B)
+    from graph import dijkstra_shortest_path, CAMPUS_GRAPH
+    sample_rides = [
+        ("ride-01", "DRV-101", "Marcus Vance (Transit Coordinator)", "node-main-gate", "node-south-gate", "08:30", 3, 4, 1.5),
+        ("ride-02", "DRV-102", "Sarah Lin (Peer Mentor)", "node-hostel-north", "node-eng-cluster", "08:45", 2, 3, 1.0),
+        ("ride-03", "DRV-103", "Dev Patel (Student)", "node-student-center", "node-tech-incubator", "14:00", 3, 4, 1.5),
+        ("ride-04", "DRV-104", "Prof. Kelling (Faculty)", "node-admin", "node-hostel-south", "17:15", 2, 4, 2.0),
+    ]
+
+    for r in sample_rides:
+        cursor.execute("SELECT COUNT(*) FROM driver_rides WHERE id = ?", (r[0],))
+        if cursor.fetchone()[0] == 0:
+            direct_dist, _ = dijkstra_shortest_path(CAMPUS_GRAPH, r[3], r[4])
+            cursor.execute(
+                """
+                INSERT INTO driver_rides (
+                    id, driver_id, driver_name, origin_id, destination_id,
+                    departure_time, available_seats, total_seats, max_detour_km,
+                    direct_distance_km, status, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
+                """,
+                (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], direct_dist, datetime.now().isoformat())
+            )
+
+    # 8. Seed Passenger Requests (Module B)
+    sample_requests = [
+        ("req-pool-01", "STU-2026-0842", "Alex Rivera (Student)", "node-hostel-north", "node-south-gate", "08:35", 15, 1, 2.0),
+        ("req-pool-02", "STU-2026-0512", "Priya Sharma (Student)", "node-admin", "node-tech-incubator", "14:10", 20, 1, 1.5),
+    ]
+
+    for pr in sample_requests:
+        cursor.execute("SELECT COUNT(*) FROM passenger_requests WHERE id = ?", (pr[0],))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute(
+                """
+                INSERT INTO passenger_requests (
+                    id, passenger_id, passenger_name, pickup_id, dropoff_id,
+                    preferred_time, time_flexibility_mins, seats_needed, max_detour_km,
+                    status, matched_ride_id, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NULL, ?)
+                """,
+                (pr[0], pr[1], pr[2], pr[3], pr[4], pr[5], pr[6], pr[7], pr[8], datetime.now().isoformat())
+            )
+
+    # 9. Seed Initial Completed Carpool Match Record for historical savings
+    cursor.execute("SELECT COUNT(*) FROM carpool_match_records WHERE id = ?", ("match-seed-01",))
+    if cursor.fetchone()[0] == 0:
+        cursor.execute(
+            """
+            INSERT INTO carpool_match_records (
+                id, ride_id, request_id, detour_km, shared_distance_km,
+                saved_distance_km, saved_cost_inr, avoided_co2_kg, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "match-seed-01",
+                "ride-01",
+                "req-pool-01",
+                0.8,
+                4.2,
+                3.2,
+                27.20,
+                0.384,
+                "2026-10-28 09:00:00"
+            )
+        )
 
     conn.commit()
     conn.close()

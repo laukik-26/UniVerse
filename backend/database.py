@@ -106,6 +106,57 @@ def init_db():
     )
     """)
 
+    # 7. Driver Rides Table (Module B)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS driver_rides (
+        id TEXT PRIMARY KEY,
+        driver_id TEXT NOT NULL,
+        driver_name TEXT NOT NULL,
+        origin_id TEXT NOT NULL,
+        destination_id TEXT NOT NULL,
+        departure_time TEXT NOT NULL,
+        available_seats INTEGER NOT NULL,
+        total_seats INTEGER NOT NULL,
+        max_detour_km REAL NOT NULL,
+        direct_distance_km REAL NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # 8. Passenger Requests Table (Module B)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS passenger_requests (
+        id TEXT PRIMARY KEY,
+        passenger_id TEXT NOT NULL,
+        passenger_name TEXT NOT NULL,
+        pickup_id TEXT NOT NULL,
+        dropoff_id TEXT NOT NULL,
+        preferred_time TEXT NOT NULL,
+        time_flexibility_mins INTEGER NOT NULL,
+        seats_needed INTEGER NOT NULL,
+        max_detour_km REAL NOT NULL,
+        status TEXT NOT NULL,
+        matched_ride_id TEXT,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # 9. Carpool Match Records Table (Module B)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS carpool_match_records (
+        id TEXT PRIMARY KEY,
+        ride_id TEXT NOT NULL,
+        request_id TEXT NOT NULL,
+        detour_km REAL NOT NULL,
+        shared_distance_km REAL NOT NULL,
+        saved_distance_km REAL NOT NULL,
+        saved_cost_inr REAL NOT NULL,
+        avoided_co2_kg REAL NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """)
+
     conn.commit()
     conn.close()
 
