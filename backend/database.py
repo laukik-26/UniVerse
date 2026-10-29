@@ -157,6 +157,137 @@ def init_db():
     )
     """)
 
+    # 10. Privacy-Preserving Wellbeing Aggregate Sessions (Module D)
+    # CRITICAL PRIVACY RULE: Never store raw browsing events, URLs, or typed text.
+    # Only store voluntary, anonymous session summaries.
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS wellbeing_sessions (
+        id TEXT PRIMARY KEY,
+        session_duration_seconds INTEGER NOT NULL,
+        paused_seconds INTEGER NOT NULL,
+        effective_duration_seconds INTEGER NOT NULL,
+        context_switches INTEGER NOT NULL,
+        distraction_dwell_seconds INTEGER NOT NULL,
+        productivity_score_pct REAL NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # 11. Exam Monitoring Incidents Table (Module E)
+    # ETHICAL RULE: Automated detections are behavioral cues for proctor review,
+    # NOT proof of academic misconduct.
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS exam_incidents (
+        id TEXT PRIMARY KEY,
+        session_id TEXT NOT NULL,
+        desk_label TEXT NOT NULL,
+        source TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        confidence REAL NOT NULL,
+        timestamp TEXT NOT NULL,
+        status TEXT NOT NULL,
+        reviewer_notes TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )
+    """)
+
+    # 12. Exam Review Proctor Audit Log (Module E)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS exam_audit_log (
+        id TEXT PRIMARY KEY,
+        incident_id TEXT NOT NULL,
+        action TEXT NOT NULL,
+        actor_role TEXT NOT NULL,
+        previous_status TEXT NOT NULL,
+        new_status TEXT NOT NULL,
+        notes TEXT NOT NULL,
+        timestamp TEXT NOT NULL
+    )
+    """)
+
+    # Seed initial synthetic exam incidents if table is empty
+    cursor.execute("SELECT COUNT(*) FROM exam_incidents")
+    if cursor.fetchone()[0] == 0:
+        seed_incidents = [
+            (
+                "inc-101",
+                "EXAM-2026-CS301",
+                "Desk 04 (Anonymous)",
+                "Synthetic Demo",
+                "Repeated Head-Turn Cues",
+                0.82,
+                "10:14:22",
+                "pending_review",
+                "",
+                "2026-10-29 10:14:22",
+                "2026-10-29 10:14:22",
+            ),
+            (
+                "inc-102",
+                "EXAM-2026-CS301",
+                "Desk 12 (Anonymous)",
+                "Synthetic Demo",
+                "Restricted Zone Intrusion",
+                0.89,
+                "10:28:05",
+                "in_review",
+                "Proctor note: Observed object protruding into boundary perimeter. Cross-referencing physical desk.",
+                "2026-10-29 10:28:05",
+                "2026-10-29 10:30:12",
+            ),
+            (
+                "inc-103",
+                "EXAM-2026-CS301",
+                "Desk 19 (Anonymous)",
+                "Synthetic Demo",
+                "Prolonged Absence",
+                0.95,
+                "09:45:10",
+                "dismissed",
+                "Authorized restroom break verified by Hall Supervisor.",
+                "2026-10-29 09:45:10",
+                "2026-10-29 09:50:00",
+            ),
+            (
+                "inc-104",
+                "EXAM-2026-CS301",
+                "Desk 07 (Anonymous)",
+                "Synthetic Demo",
+                "Multiple Faces In Frame",
+                0.74,
+                "10:35:40",
+                "resolved",
+                "Invigilator approached desk to deliver supplementary question paper. Verified non-infraction.",
+                "2026-10-29 10:35:40",
+                "2026-10-29 10:40:15",
+            ),
+        ]
+        cursor.executemany(
+            """
+            INSERT INTO exam_incidents (
+                id, session_id, desk_label, source, event_type, confidence,
+                timestamp, status, reviewer_notes, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            seed_incidents,
+        )
+
+        # Initial audit log entries
+        seed_audit = [
+            ("aud-001", "inc-102", "status_change", "Proctor Meaghan", "pending_review", "in_review", "Review initiated.", "10:30:12"),
+            ("aud-002", "inc-103", "dismissal", "Proctor Meaghan", "pending_review", "dismissed", "Authorized restroom break.", "09:50:00"),
+            ("aud-003", "inc-104", "resolution", "Proctor Meaghan", "in_review", "resolved", "Invigilator presence confirmed.", "10:40:15"),
+        ]
+        cursor.executemany(
+            """
+            INSERT INTO exam_audit_log (
+                id, incident_id, action, actor_role, previous_status, new_status, notes, timestamp
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            seed_audit,
+        )
+
     conn.commit()
     conn.close()
 

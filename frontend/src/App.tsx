@@ -5,6 +5,8 @@ import { OverviewView } from './components/dashboard/OverviewView';
 import { AcademicHubView } from './components/academic/AcademicHubView';
 import { RidePoolingView } from './components/rides/RidePoolingView';
 import { ObservatoryView } from './components/observatory/ObservatoryView';
+import { WellbeingView } from './components/wellbeing/WellbeingView';
+import { ExamMonitoringView } from './components/exam/ExamMonitoringView';
 import { ModuleFoundationView } from './components/modules/ModuleFoundationView';
 import { NotificationDrawer } from './components/common/NotificationDrawer';
 import type { ModuleId, UserRole, ActivityNotification } from './types/navigation';
@@ -134,10 +136,24 @@ export const App: React.FC = () => {
             />
           )}
 
+          {activeModule === 'digital-wellbeing' && (
+            <WellbeingView
+              onActivityLogged={(title, type) => handleActivityLogged(title, type, 'digital-wellbeing')}
+            />
+          )}
+
+          {activeModule === 'exam-monitoring' && (
+            <ExamMonitoringView
+              onActivityLogged={(title, type) => handleActivityLogged(title, type, 'exam-monitoring')}
+            />
+          )}
+
           {activeModule !== 'overview' && 
            activeModule !== 'academic-hub' && 
            activeModule !== 'ride-pooling' && 
-           activeModule !== 'sustainable-compute' && (
+           activeModule !== 'sustainable-compute' && 
+           activeModule !== 'digital-wellbeing' && 
+           activeModule !== 'exam-monitoring' && (
             <ModuleFoundationView
               moduleId={activeModule}
               onBackToOverview={() => setActiveModule('overview')}

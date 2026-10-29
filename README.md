@@ -28,14 +28,22 @@ UniVerse brings together 5 core campus capabilities into one shared interface:
    - Interactive what-if workload sandbox with configurable idle/peak power, observation windows, and grid presets.
 
 4. **Module D: Privacy-Aware Digital Wellbeing**
-   - Voluntary, client-side focus session timer.
-   - Local heuristic domain classification without URL/content capture.
-   - Full data sovereignty controls: Pause, Inspect Stored Data, and Purge.
+   - Voluntary, student-controlled focus session timer with accurate wall-clock epoch persistence (drift-free across tab suspensions).
+   - Strict mathematical pause exclusion rule: `T_effective = (T_now - T_start) - Σ T_paused`.
+   - Client-side domain normalization and rule-based categorization (`Productive`, `Neutral`, `Distracting`) with user override support.
+   - Context switches calculated as consecutive category transitions.
+   - Dwell time estimation with a documented 300-second (5-minute) cap per transition to prevent idle overcounting.
+   - Zero-surveillance data minimization: no raw URLs, search queries, keystrokes, or page contents collected.
+   - Full data sovereignty: raw JSON payload inspection and real permanent SQLite/client data purge.
 
 5. **Module E: Responsible Examination Monitoring**
-   - Controlled video stream event detection (head pose yaw/pitch, zone intrusion).
-   - Timestamped confidence logging.
-   - Dedicated human proctor review queue with strict non-punitive safeguards (no automated disqualifications).
+   - Strict non-punitive ethical architecture: automated cues are behavioral signals for certified proctor review, NOT proof of academic dishonesty.
+   - Predefined observable event rules tested independently of CV hardware:
+     - Rule 1: Sliding-window temporal frequency clustering (e.g. ≥3 head-turn cues in 30s).
+     - Rule 2: 2D Cartesian bounding box intersection & IoU zone intrusion testing.
+   - Certified proctor review queue with status workflows: `Pending Review` → `In Review` → `Dismissed (False Positive)` or `Resolved`.
+   - Mandatory proctor audit log: every status transition and evaluation note is written to an immutable audit trail (`exam_audit_log`).
+   - Controlled local camera station with zero cloud video storage (in-browser volatile frame processing).
 
 ---
 
@@ -109,12 +117,17 @@ UniVerse/
 
 ### Running Test Suites
 
-1. Backend Unit Tests (Modules A, B, and C):
+1. Backend Unit Tests (Modules A, B, C, D, and E):
    ```bash
    cd backend
    python -m pytest -v
    ```
-   Runs 36 comprehensive tests covering academic hub workflows, Dijkstra shortest path carpool matching, SPECpower linear energy calculations, boundary edge cases, zero-baseline divisions, and Scope 2 vs Scope 3 accounting isolation.
+   Runs 56 comprehensive tests covering:
+   - Module A: Dynamic task progress, mentor matching, deduplication.
+   - Module B: Dijkstra shortest-path, non-negative weights, detour ranking, carpool match persistence.
+   - Module C: Linear SPECpower modeling, kWh conversion, CEA grid factor citation, Scope 2 vs Scope 3 separation.
+   - Module D: Domain normalization, custom classification rules, pause-excluding focus timers, context-switch computation, 300s capped dwell math, and permanent data purge.
+   - Module E: Sliding-window event counting rules, 2D Cartesian bounding box IoU zone intrusion, proctor review transitions, immutable audit logs, and non-punitive safeguards.
 
 2. Frontend Build Verification:
    ```bash

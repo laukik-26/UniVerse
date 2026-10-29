@@ -13,6 +13,8 @@ from routers.academic import router as academic_router
 from routers.activities import router as activities_router
 from routers.rides import router as rides_router
 from routers.observatory import router as observatory_router
+from routers.wellbeing import router as wellbeing_router
+from routers.exam import router as exam_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,19 +49,21 @@ app.include_router(academic_router)
 app.include_router(activities_router)
 app.include_router(rides_router)
 app.include_router(observatory_router)
+app.include_router(wellbeing_router)
+app.include_router(exam_router)
 
 @app.get("/")
 def read_root():
     return {
         "platform": "UniVerse Campus Ecosystem",
         "status": "online",
-        "version": "1.0.0-alpha",
+        "version": "1.0.0",
         "modules": [
             "A: Student Intelligence & Academic Hub (Active)",
-            "B: Smart Campus Ride-Pooling (Planned)",
-            "C: Sustainable Computing Observatory (Planned)",
-            "D: Privacy-Aware Digital Wellbeing (Planned)",
-            "E: Responsible Examination Monitoring (Planned)",
+            "B: Smart Campus Ride-Pooling (Active)",
+            "C: Sustainable Computing Observatory (Active)",
+            "D: Privacy-Aware Digital Wellbeing (Active)",
+            "E: Responsible Examination Monitoring (Active)",
         ],
     }
 
