@@ -12,6 +12,7 @@ from seed import seed_database
 from routers.academic import router as academic_router
 from routers.activities import router as activities_router
 from routers.rides import router as rides_router
+from routers.observatory import router as observatory_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,6 +46,7 @@ app.add_middleware(
 app.include_router(academic_router)
 app.include_router(activities_router)
 app.include_router(rides_router)
+app.include_router(observatory_router)
 
 @app.get("/")
 def read_root():

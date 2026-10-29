@@ -228,3 +228,81 @@ class TransportSavingsSummary(BaseModel):
     assumed_emission_factor_g_km: float
     methodology_note: str
 
+# ----------------- Sustainable Computing Observatory (Module C) -----------------
+
+class WorkloadTelemetrySnapshot(BaseModel):
+    mode_label: str
+    request_count: int
+    requests_per_second: float
+    avg_latency_ms: float
+    p95_latency_ms: float
+    cpu_utilization_pct: float
+    cpu_utilization_fraction: float
+    memory_usage_mb: int
+    optimization_techniques: str
+
+class ServiceWorkloadResponse(BaseModel):
+    id: str
+    name: str
+    module: str
+    tech_stack: str
+    workload_type: str
+    observation_window_seconds: int
+    baseline: WorkloadTelemetrySnapshot
+    optimized: WorkloadTelemetrySnapshot
+
+class CustomEstimateRequest(BaseModel):
+    idle_power_w: float = Field(default=45.0, ge=0.0, le=5000.0)
+    max_power_w: float = Field(default=220.0, ge=0.0, le=5000.0)
+    utilization_fraction: float = Field(..., ge=0.0, le=1.0)
+    duration_seconds: float = Field(default=3600.0, gt=0.0, le=864000.0)
+    grid_factor_kg_per_kwh: float = Field(default=0.716, ge=0.0, le=5.0)
+
+class ScenarioEnergyEvaluation(BaseModel):
+    utilization_pct: float
+    utilization_fraction: float
+    average_power_w: float
+    energy_kwh: float
+    co2_kg: float
+    co2_grams: float
+    duration_seconds: float
+
+class ServiceScenarioComparison(BaseModel):
+    service_id: str
+    service_name: str
+    module: str
+    baseline: ScenarioEnergyEvaluation
+    optimized: ScenarioEnergyEvaluation
+    absolute_energy_reduction_kwh: float
+    energy_savings_percentage: float
+    absolute_co2_reduction_kg: float
+    co2_savings_percentage: float
+    latency_reduction_percentage: float
+
+class ObservatoryScenariosSummary(BaseModel):
+    observation_window_seconds: float
+    idle_power_w: float
+    max_power_w: float
+    grid_factor_kg_per_kwh: float
+    grid_source_citation: str
+    total_baseline_energy_kwh: float
+    total_optimized_energy_kwh: float
+    total_energy_saved_kwh: float
+    overall_energy_savings_percentage: float
+    total_baseline_co2_kg: float
+    total_optimized_co2_kg: float
+    total_co2_avoided_kg: float
+    overall_co2_savings_percentage: float
+    services: List[ServiceScenarioComparison]
+    methodology_disclosure: str
+
+class TransportVsComputeComparison(BaseModel):
+    category_separation_note: str
+    compute_energy_saved_kwh: float
+    compute_co2_avoided_kg: float
+    transport_distance_avoided_km: float
+    transport_co2_avoided_kg: float
+    transport_fuel_cost_saved_inr: float
+    zero_double_counting_guarantee: str
+
+

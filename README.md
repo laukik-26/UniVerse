@@ -19,9 +19,13 @@ UniVerse brings together 5 core campus capabilities into one shared interface:
    - Travel cost and avoided vehicle-kilometer carbon calculations.
 
 3. **Module C: Sustainable Computing Observatory**
-   - Telemetry simulation across campus microservices (LMS, Auth, Media).
-   - Energy consumption (Joules/kWh) and grid carbon intensity calculations.
-   - Baseline vs. eco-optimized load comparison.
+   - Telemetry simulation across 3 core campus microservices (Placement API, Resource Search, Ride Matcher).
+   - Linear SPECpower server energy model: `P_avg = P_idle + (P_max - P_idle) * u`.
+   - Energy conversion: `E_kWh = P_avg * t / 3,600,000`.
+   - Carbon emissions estimation with verified grid factors: `CO2 = E_kWh * f_grid` (default 0.716 kg/kWh, cited from CEA CO2 Baseline Database for Indian Power Sector v19.0, 2024).
+   - Baseline vs. optimized scenario differential calculations (dynamic percentage reductions, safe zero-baseline division).
+   - Strict operational boundary partitioning between Scope 2 datacenter compute emissions and Scope 3 commuter transport emissions with zero double-counting guarantee.
+   - Interactive what-if workload sandbox with configurable idle/peak power, observation windows, and grid presets.
 
 4. **Module D: Privacy-Aware Digital Wellbeing**
    - Voluntary, client-side focus session timer.
@@ -102,3 +106,19 @@ UniVerse/
    ```
    http://localhost:8000/docs
    ```
+
+### Running Test Suites
+
+1. Backend Unit Tests (Modules A, B, and C):
+   ```bash
+   cd backend
+   python -m pytest -v
+   ```
+   Runs 36 comprehensive tests covering academic hub workflows, Dijkstra shortest path carpool matching, SPECpower linear energy calculations, boundary edge cases, zero-baseline divisions, and Scope 2 vs Scope 3 accounting isolation.
+
+2. Frontend Build Verification:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+   Validates strict TypeScript types, component interfaces, and generates production bundles.

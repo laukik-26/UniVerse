@@ -4,6 +4,7 @@ import { TopNavbar } from './components/layout/TopNavbar';
 import { OverviewView } from './components/dashboard/OverviewView';
 import { AcademicHubView } from './components/academic/AcademicHubView';
 import { RidePoolingView } from './components/rides/RidePoolingView';
+import { ObservatoryView } from './components/observatory/ObservatoryView';
 import { ModuleFoundationView } from './components/modules/ModuleFoundationView';
 import { NotificationDrawer } from './components/common/NotificationDrawer';
 import type { ModuleId, UserRole, ActivityNotification } from './types/navigation';
@@ -69,10 +70,14 @@ export const App: React.FC = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  const handleActivityLogged = (title: string, type: 'info' | 'success' | 'warning' = 'info') => {
+  const handleActivityLogged = (
+    title: string, 
+    type: 'info' | 'success' | 'warning' = 'info', 
+    module: ModuleId = 'academic-hub'
+  ) => {
     const newNotif: ActivityNotification = {
       id: `notif-${Date.now()}`,
-      module: 'academic-hub',
+      module,
       title,
       timestamp: 'Just now',
       type,
@@ -119,11 +124,20 @@ export const App: React.FC = () => {
 
           {activeModule === 'ride-pooling' && (
             <RidePoolingView
-              onActivityLogged={(title, type) => handleActivityLogged(title, type)}
+              onActivityLogged={(title, type) => handleActivityLogged(title, type, 'ride-pooling')}
             />
           )}
 
-          {activeModule !== 'overview' && activeModule !== 'academic-hub' && activeModule !== 'ride-pooling' && (
+          {activeModule === 'sustainable-compute' && (
+            <ObservatoryView
+              onActivityLogged={(title, type) => handleActivityLogged(title, type, 'sustainable-compute')}
+            />
+          )}
+
+          {activeModule !== 'overview' && 
+           activeModule !== 'academic-hub' && 
+           activeModule !== 'ride-pooling' && 
+           activeModule !== 'sustainable-compute' && (
             <ModuleFoundationView
               moduleId={activeModule}
               onBackToOverview={() => setActiveModule('overview')}
