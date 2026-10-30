@@ -25,7 +25,7 @@ Execution Output:
 ```text
 ============================= test session starts =============================
 platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0
-rootdir: C:\Users\lauki\OneDrive\Desktop\UniVerse\UniVerse
+rootdir: UniVerse/UniVerse
 collected 62 items
 
 backend/test_academic.py::test_student_profile_structure PASSED          [  1%]

@@ -6,8 +6,8 @@ This document provides complete, rigorous technical specifications for every alg
 
 ## 1. Dijkstra Shortest-Path Algorithm
 
-- **Source Code**: [`backend/graph.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/graph.py) (`dijkstra_shortest_path`)
-- **Unit Test File**: [`backend/test_ride_pooling.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_ride_pooling.py)
+- **Source Code**: [`backend/graph.py`](../backend/graph.py) (`dijkstra_shortest_path`)
+- **Unit Test File**: [`backend/test_ride_pooling.py`](../backend/test_ride_pooling.py)
 - **Purpose**: Calculates the minimum road distance in kilometers and reconstructs the deterministic sequence of campus landmarks connecting any source and destination node on the campus road graph.
 
 ### 1.1 Inputs and Outputs
@@ -103,8 +103,8 @@ function dijkstra_shortest_path(graph, source, target):
 
 ## 2. Sequential 4-Stop Carpool Route Matching & Detour Optimization
 
-- **Source Code**: [`backend/matcher.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/matcher.py) (`calculate_shared_route`, `match_passenger_to_rides`)
-- **Unit Test File**: [`backend/test_ride_pooling.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_ride_pooling.py)
+- **Source Code**: [`backend/matcher.py`](../backend/matcher.py) (`calculate_shared_route`, `match_passenger_to_rides`)
+- **Unit Test File**: [`backend/test_ride_pooling.py`](../backend/test_ride_pooling.py)
 - **Purpose**: Evaluates candidate driver commutes against passenger requests by calculating composite detour kilometers, schedule windows, and seat capacity.
 
 ### 2.1 Inputs and Outputs
@@ -137,8 +137,8 @@ Smallest detour is prioritized, followed by closest departure time.
 
 ## 3. Placement Readiness Milestone Aggregation
 
-- **Source Code**: [`backend/routers/academic.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/routers/academic.py) (`get_placement_progress`)
-- **Unit Test File**: [`backend/test_academic.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_academic.py)
+- **Source Code**: [`backend/routers/academic.py`](../backend/routers/academic.py) (`get_placement_progress`)
+- **Unit Test File**: [`backend/test_academic.py`](../backend/test_academic.py)
 - **Purpose**: Computes overall and category-specific career readiness scores based on completed milestones.
 
 ### 3.1 Mathematical Formulation
@@ -159,8 +159,8 @@ Smallest detour is prioritized, followed by closest departure time.
 
 ## 4. SPECpower Linear Server Power & Emissions Modeling
 
-- **Source Code**: [`backend/energy_model.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/energy_model.py)
-- **Unit Test File**: [`backend/test_observatory.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_observatory.py)
+- **Source Code**: [`backend/energy_model.py`](../backend/energy_model.py)
+- **Unit Test File**: [`backend/test_observatory.py`](../backend/test_observatory.py)
 - **Purpose**: Translates simulated CPU utilization fractions into active Watts, kilowatt-hours, and Scope 2 carbon footprint.
 
 ### 4.1 Mathematical Formulas
@@ -191,8 +191,8 @@ Smallest detour is prioritized, followed by closest departure time.
 
 ## 5. Focus Duration & Capped Dwell Time Estimation
 
-- **Source Code**: [`backend/wellbeing.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/wellbeing.py)
-- **Unit Test File**: [`backend/test_wellbeing.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_wellbeing.py)
+- **Source Code**: [`backend/wellbeing.py`](../backend/wellbeing.py)
+- **Unit Test File**: [`backend/test_wellbeing.py`](../backend/test_wellbeing.py)
 - **Purpose**: Computes effective concentration duration without tab drift and calculates browsing category dwell times with an explicit anti-idle cap.
 
 ### 5.1 Pause-Excluded Focus Duration
@@ -221,8 +221,8 @@ Given session start $T_{\text{start}}$, session stop $T_{\text{stop}}$, and a li
 
 ## 6. Temporal Sliding-Window Frequency Analysis
 
-- **Source Code**: [`backend/exam_rules.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/exam_rules.py) (`evaluate_event_window`)
-- **Unit Test File**: [`backend/test_exam.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_exam.py)
+- **Source Code**: [`backend/exam_rules.py`](../backend/exam_rules.py) (`evaluate_event_window`)
+- **Unit Test File**: [`backend/test_exam.py`](../backend/test_exam.py)
 - **Purpose**: Evaluates whether discrete cues (e.g., repeated head-turns) exceed an occurrence threshold within any sliding time window $W$.
 
 ### 6.1 Two-Pointer Sliding Window
@@ -241,8 +241,8 @@ Given session start $T_{\text{start}}$, session stop $T_{\text{stop}}$, and a li
 
 ## 7. 2D Bounding Box Intersection & IoU Zone Intrusion
 
-- **Source Code**: [`backend/exam_rules.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/exam_rules.py) (`compute_box_intersection_iou`, `evaluate_zone_geometry`)
-- **Unit Test File**: [`backend/test_exam.py`](file:///c:/Users/lauki/OneDrive/Desktop/UniVerse/UniVerse/backend/test_exam.py)
+- **Source Code**: [`backend/exam_rules.py`](../backend/exam_rules.py) (`compute_box_intersection_iou`, `evaluate_zone_geometry`)
+- **Unit Test File**: [`backend/test_exam.py`](../backend/test_exam.py)
 - **Purpose**: Evaluates whether detected hand or object bounding boxes intrude into restricted desk perimeters.
 
 ### 7.1 Mathematical Formulation
